@@ -189,7 +189,6 @@ const soundConfigs = [
 
 const MusicPlayer = () => {
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState('spotify');
   const [activeSounds, setActiveSounds] = useState({});
   const [volumes, setVolumes] = useState({ rain: 0.5, ocean: 0.5, wind: 0.5, fire: 0.5 });
   const audioCtxRef = useRef(null);
@@ -246,13 +245,15 @@ const MusicPlayer = () => {
   }, []);
 
   useEffect(() => {
+    const currentNodes = nodesRef.current;
+    const currentCtx = audioCtxRef.current;
     return () => {
-      Object.values(nodesRef.current).forEach(nodes => {
+      Object.values(currentNodes).forEach(nodes => {
         try { nodes.source.stop(); } catch (e) {}
         try { if (nodes.extraSource) nodes.extraSource.stop(); } catch (e) {}
         try { if (nodes.lfo) nodes.lfo.forEach(l => l.stop()); } catch (e) {}
       });
-      try { if (audioCtxRef.current) audioCtxRef.current.close(); } catch (e) {}
+      try { if (currentCtx) currentCtx.close(); } catch (e) {}
     };
   }, []);
 
